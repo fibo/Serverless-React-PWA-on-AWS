@@ -26,3 +26,10 @@ for both naked domain and wildcard domain.
 
 ![Certificates DSN validation](./images/Certificates-DNS_validation.png)
 
+## Simple Email Service
+
+First of all, verify *your-domain.com* domain. Go to *SES > Domains* and click *Verify a New Domain*.
+When the DSN records are prompted, click on *Use Route 53*.
+
+![Email domain verification](./images/SES-Use_Route53_verification.png)
+

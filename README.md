@@ -33,3 +33,39 @@ When the DSN records are prompted, click on *Use Route 53*.
 
 ![Email domain verification](./images/SES-Use_Route53_verification.png)
 
+It should take few minutes to validate. Well done! Now it's time to start coding.
+
+## Start coding
+
+Create your git repo and init an npm package.
+
+```bash
+npm init
+```
+
+You may want to make it private, add in your *package.json*
+
+```json
+  "private": true,
+```
+
+If it is not a package to be installed as a dependency, I also like to disable *package-lock.json*.
+Create a *.npmrc* file with the following content.
+
+```
+package-lock=false
+```
+
+Of course, create a *.gitignore* file, you can start with the following content
+
+```
+node_modules
+```
+
+Before start coding, I would go for [EditorConfig](http://EditorConfig.org).
+Do not think it twice, you can add a *.editorconfig* file just launching
+
+```bash
+npm i dot-editorconfig -D
+```
+

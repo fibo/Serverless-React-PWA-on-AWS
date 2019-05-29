@@ -69,3 +69,16 @@ Do not think it twice, you can add a *.editorconfig* file just launching
 npm i dot-editorconfig -D
 ```
 
+**TODO** install TypeScript and other deps
+
+Install *aws-sdk* for JavaScript.
+
+```bash
+npm i aws-sdk -D
+```
+
+Write code to send emails, take a look at the following implementation:
+
+* [api/sendEmail.ts](https://github.com/fibo/aws-map.com/blob/Serverless-React-PWA-on-AWS/api/sendEmail.ts)
+* [api/emailTemplates.ts](https://github.com/fibo/aws-map.com/blob/Serverless-React-PWA-on-AWS/api/emailTemplates.ts)
+

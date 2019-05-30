@@ -157,7 +157,7 @@ Ok, let's give it a try. Create a file, for instance *sendMyFirstEmail.ts*, with
 ```typescript
 import { sendCreateAccountEmail } from "./path/to/your/api/sendEmail"
 
-sendCreateAccountEmail("your_email@your-domain.com", "123", (err, data) => {
+sendCreateAccountEmail("your_email@gmail.com", "123", (err, data) => {
   if (err) throw err
 
   console.log(data)
@@ -190,9 +190,8 @@ But let's use good old emails.
 
 We are going to create the following lambdas:
 
-* create-account
-* enter-account
-* reset-password
-* verify-account
-* delete-account
+* [create-account](https://github.com/fibo/aws-map.com/tree/master/api/lambdas/create-account)
+* [enter-account](https://github.com/fibo/aws-map.com/tree/master/api/lambdas/enter-account)
+* [reset-password](https://github.com/fibo/aws-map.com/tree/master/api/lambdas/reset-password)
+* [verify-email](https://github.com/fibo/aws-map.com/tree/master/api/lambdas/verify-email)
 

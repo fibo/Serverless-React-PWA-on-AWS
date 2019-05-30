@@ -185,3 +185,14 @@ Let me share this lesson I learned. This procedure works with *dot com*, and als
 I was not able to use Amazon SES with a *dot at* domain. Domain hacking is fun, but it is not worth for a company. Just get a *dot com* domain name.
 People still don't get domain hacking, they expect a *dot com*. What a pity, I like so much Moldovian domain extension, ahahaha.
 
+Ok, now that we can send emails, we can create a customer base. You may want to choose other authentication methods, for example via SMS, via GitHub, etc.
+But let's use good old emails.
+
+We are going to create the following lambdas:
+
+* create-account
+* enter-account
+* reset-password
+* verify-account
+* delete-account
+

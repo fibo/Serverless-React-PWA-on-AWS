@@ -69,7 +69,44 @@ Do not think it twice, you can add a *.editorconfig* file just launching
 npm i dot-editorconfig -D
 ```
 
-**TODO** install TypeScript and other deps
+Install *typescript* and related packages.
+
+```bash
+npm i tslib tslint typescript @types/node -D
+```
+
+Create the following *tsconfig.json* file in your project root folder.
+
+```json
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "charset": "utf8",
+    "esModuleInterop": true,
+    "importHelpers": true,
+    "module": "commonjs",
+    "noImplicitUseStrict": true,
+    "removeComments": true,
+    "sourceMap": false,
+    "strictNullChecks": true,
+    "target": "es2017"
+  }
+}
+```
+
+Create *tslint.json* file too: I would start with the following configuration:
+
+```json
+{
+  "extends": ["tslint:latest"],
+  "rules": {
+    "member-access": [true, "no-public"],
+    "no-implicit-dependencies": [true, "dev"],
+    "semicolon": [true, "never"],
+    "trailing-comma": false
+  }
+}
+```
 
 Install *aws-sdk* for JavaScript.
 

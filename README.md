@@ -150,3 +150,38 @@ Write code to send emails, take a look at the following implementation:
 * [api/sendEmail.ts](https://github.com/fibo/aws-map.com/blob/Serverless-React-PWA-on-AWS/api/sendEmail.ts)
 * [api/emailTemplates.ts](https://github.com/fibo/aws-map.com/blob/Serverless-React-PWA-on-AWS/api/emailTemplates.ts)
 
+Notice the *api/domainNames.ts* file that exports the `nakedDomain` variable, you may want to customize with your awesome domain.
+
+Ok, let's give it a try. Create a file, for instance *sendMyFirstEmail.ts*, with a snippet like this
+
+```typescript
+import { sendCreateAccountEmail } from "./path/to/your/api/sendEmail"
+
+sendCreateAccountEmail("your_email@your-domain.com", "123", (err, data) => {
+  if (err) throw err
+
+  console.log(data)
+})
+```
+
+Make it simple, just install TS stuff globally.
+
+```bash
+npm i ts-node typescript -g
+```
+
+Then send you email with:
+
+```typescript
+$ ts-node sendMyFirstEmail.ts
+{ ResponseMetadata: { RequestId: 'a5eb6749-82ff-11e9-8d59-578481efc51f' },
+  MessageId:
+   '0100016b09c4ab82-db581946-60df-43fd-b56c-19ece2a0d2d1-000000' }
+```
+
+Yay, email arrived... a new company is being born...
+
+Let me share this lesson I learned. This procedure works with *dot com*, and also *dot net* and maybe *dot info* domains. Well, I bought this domain: *geoch.at*. It did not worked.
+I was not able to use Amazon SES with a *dot at* domain. Domain hacking is fun, but it is not worth for a company. Just get a *dot com* domain name.
+People still don't get domain hacking, they expect a *dot com*. What a pity, I like so much Moldovian domain extension, ahahaha.
+

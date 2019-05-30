@@ -102,11 +102,42 @@ Create *tslint.json* file too: I would start with the following configuration:
   "rules": {
     "member-access": [true, "no-public"],
     "no-implicit-dependencies": [true, "dev"],
+    "ordered-imports": [true,
+      {
+        "named-imports-order": "lowercase-first"
+      }
+    ],
     "semicolon": [true, "never"],
     "trailing-comma": false
   }
 }
 ```
+
+Add the following scripts to your *package.json*:
+
+```json
+  "scripts": {
+    "tsc--noemit": "tsc --declaration --project . --noemit",
+    "tslint": "tslint --project ."
+  }
+```
+
+And now, the fundamentalist (I am kidding:)) part: add a commit hook that run those basic checks. Install *pre-commit*:
+
+```bash
+npm i pre-commit -D
+```
+
+Add the following to your *package.json*:
+
+```json
+  "pre-commit": [
+    "tsc--noemit",
+    "tslint"
+  ],
+```
+
+And now a git hook will run those npm scripts on commit. You can bypass it with `git commit -n`.
 
 Install *aws-sdk* for JavaScript.
 

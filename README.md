@@ -300,10 +300,10 @@ We are going to use no framework for our AWS lambdas. In my opinion, AWS is the 
 
 Let's start with a dummy lambda, you can check the final implementations in the links below:
 
-* [create-account](https://github.com/fibo/aws-map.com/tree/master/api/lambdas/create-account)
-* [enter-account](https://github.com/fibo/aws-map.com/tree/master/api/lambdas/enter-account)
-* [reset-password](https://github.com/fibo/aws-map.com/tree/master/api/lambdas/reset-password)
-* [verify-email](https://github.com/fibo/aws-map.com/tree/master/api/lambdas/verify-email)
+* [create-account](https://github.com/fibo/aws-map.com/tree/Serverless-React-PWA-on-AWS/api/lambdas/create-account)
+* [enter-account](https://github.com/fibo/aws-map.com/tree/Serverless-React-PWA-on-AWS/api/lambdas/enter-account)
+* [reset-password](https://github.com/fibo/aws-map.com/tree/Serverless-React-PWA-on-AWS/api/lambdas/reset-password)
+* [verify-email](https://github.com/fibo/aws-map.com/tree/Serverless-React-PWA-on-AWS/api/lambdas/verify-email)
 
 Every lambda has its own folder and a *package.json*. The code inside is up to you, but you needd to consider
 that, even if you use plain JavaScript, you need some *build/* folder to create a **zip** file to be uploaded on AWS.
@@ -424,4 +424,48 @@ Another task I prefer to do manually, even if it could be automated, is:
 2. Set a *Project* tag, for instance *Acme*. It will be handy to filter resources as well as separate budget.
 
 ![Lambda set project tag](./images/Lambda-Set_project_tag.png)
+
+Ah, I forgot... you remember the pain and glory path... well I also use to create a Lambda that handles `OPTIONS` methods.
+
+* [http-options](https://github.com/fibo/aws-map.com/tree/Serverless-React-PWA-on-AWS/api/lambdas/http-options)
+
+## API Gateway
+
+Go to API Gateway and create a new API. Yes I know, nothing is implemented yet but I like to create dummy things that do nothing but work. It also may take some time to get your domain propagated, so it is worth to do it as soon as possible, trust me.
+
+![API Gateway creation](./images/API-create.png)
+
+Create the following resources and methods
+
+* `/account`: "POST",
+* `/enter`: "POST",
+* `/reset-password`: "POST",
+* `/verify/{token}`: "GET",
+
+Actually, we will need also `PUT /account` to update user settings and `DELETE /account` if a user dismiss the service. By now the endpoints above are enough to let the user register and login.
+For every resource we also need to add an `OPTION` method.
+Always flag **Use Lambda Proxy integration**.
+
+![API create method](./images/API-Create_method.png)
+
+Resources can be nested and have placeholders.
+
+![API create nested resource](./images/API-Create_resource.png)
+
+Now do this: *Actions > Deploy API*. When prompt ask for *stage*, create a new one and name it `v1`.
+Then go to *Custome Domain Names* and create a new domain for your api, you may want *api.your-domain.org*.
+Select previously created **ACM Certificate** and save.
+
+![API custom domain](./images/API-Custom_domain.png)
+
+You will see a spinner that says *Initializing...*, AWS is creating a CloudFront distribution (not listed on CloudFront service console).
+Click on *Edit* and add a base path mapping.
+
+![API path mapping](./images/API-Path_mapping.png)
+
+Finally go to *Route53*, select your domain hosted zone and click on *Create Record Set*. It will be **api**,
+Type A, Alias: Yes. In the alias target dropdown you should see something like *dj7qojidfbkcu.cloudfront.net* that must correspond to the *Target Domain Name* in your *API Gateway* custom domain.
+By the way, right now I still see the spinner on API Gateway but on Route53 I am already able to create the record set.
+
+![API domain on ROute53](./images/Route53-API_domain.png)
 

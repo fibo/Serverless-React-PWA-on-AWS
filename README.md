@@ -370,6 +370,9 @@ You may also change the *author*, or you could give me undeserved credits (or ma
   "author": "Gianluca Casati (http://g14n.info)",
   "license": "UNLICENSED",
   "dependencies": {},
+  "peerDependencies": {
+    "aws-lambda-res": "^1.0.0"
+  },
   "devDependencies": {
     "browserify": "^16.2.3"
   }
@@ -482,3 +485,21 @@ npm run deploy
 
 **NOTA BENE** There is no need to re deploy API Gateway.
 
+Test it! Now you should be able to send verification email (the first email you sent) and click on verification link.
+
+## DynamoDB
+
+Let's move forward, yes it will take some time even create the basic structure. The good new is that once
+created, this architecture require almost zero effort to maintain.
+
+So, let's create out user table. Take a look at [api/createTables.ts](https://github.com/fibo/aws-map.com/blob/Serverless-React-PWA-on-AWS/api/createTables.ts). Try to launch
+
+```bash
+ts-node api/createTables.ts
+```
+
+Our authentication is based on [JWT](https://jwt.io), install related package as dependency
+
+```bash
+npm i jsonwebtoken
+```

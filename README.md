@@ -78,7 +78,7 @@ npm i dot-editorconfig -D
 Install *typescript* and related packages.
 
 ```bash
-npm i tsify tslib tslint typescript @types/node -D
+npm i tsify tslint typescript @types/node -D
 ```
 
 Create the following *tsconfig.json* file in your project root folder.
@@ -89,7 +89,6 @@ Create the following *tsconfig.json* file in your project root folder.
     "allowJs": false,
     "charset": "utf8",
     "esModuleInterop": true,
-    "importHelpers": true,
     "module": "commonjs",
     "noImplicitUseStrict": true,
     "removeComments": true,
@@ -161,13 +160,19 @@ Notice the *api/domainNames.ts* file that exports the `nakedDomain` variable, yo
 Ok, let's give it a try. Create a file, for instance *sendMyFirstEmail.ts*, with a snippet like this
 
 ```typescript
-import { sendCreateAccountEmail } from "./path/to/your/api/sendEmail"
+import * as sendEmail from "./path/to/your/api/sendEmail"
 
-sendCreateAccountEmail("your_email@gmail.com", "123", (err, data) => {
-  if (err) throw err
+async function sendMyFirstEmail() {
+  try {
+    const response = await sendEmail.createAccount("your_email@gmail.com", "123")
 
-  console.log(data)
-})
+    console.log(response)
+  } catch (error) {
+    throw error
+  }
+}
+
+sendMyFirstEmail()
 ```
 
 Make it simple, just install TS stuff globally.
@@ -377,7 +382,7 @@ Start with a dummy *index.ts*, it just respond with 200 HTTP status code and `{ 
 import response from "aws-lambda-res"
 
 export async function handler(event, context) {
-  response(200)({ ok: true })
+  return response(200)({ ok: true })
 }
 ```
 
@@ -400,7 +405,7 @@ So, if TypeScript has no complains, launching npm script
 npm run create
 ```
 
-Will install deps, transpile code, generate a *build.zip* and upload it on AWS.
+Will install deps, transpile code, generate a *build.zip* and upload it on AWS creating a function.
 On success, it will also run scripts
 
 ```bash
@@ -468,4 +473,12 @@ Type A, Alias: Yes. In the alias target dropdown you should see something like *
 By the way, right now I still see the spinner on API Gateway but on Route53 I am already able to create the record set.
 
 ![API domain on ROute53](./images/Route53-API_domain.png)
+
+In case you need to update a lambda function, change into its directory and run
+
+```bash
+npm run deploy
+```
+
+**NOTA BENE** There is no need to re deploy API Gateway.
 

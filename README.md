@@ -503,3 +503,12 @@ Our authentication is based on [JWT](https://jwt.io), install related package as
 ```bash
 npm i jsonwebtoken
 ```
+
+## React boilerplate
+
+We are going to use budo and browserify, yeah!
+
+```bash
+npm i budo browserify tsify node-sass react react-redux react-router-dom @types/react @types/react-redux @types/react-router-dom redux redux-thunk tslint tslint-react typescript trunx -D
+```
+

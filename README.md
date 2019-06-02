@@ -1,12 +1,16 @@
 # Serverless-React-PWA-on-AWS
 
-> How to create a serverless Progressive Web App, using React, Redux, React Router, TypeScript on frontend and AWS Lambda, Cloudfront, Amazon SES, API Gateway for a zero maintenance required backend.
+> How to create a serverless Progressive Web App, using React, Redux, React Router, TypeScript on frontend and AWS Lambda, CloudFront, Amazon SES, API Gateway for a zero maintenance required backend.
+
+## Step zero
+
+Read https://react-pwa.github.io tutorial first.
 
 ## Brand
 
 You need a *project name*, possibly matching your domain. This name will be used everywhere in different contexts: as is, lowercase, without spaces, as a prefix etc.
 Project name in the following snippets will be **Acme**. Actually there is a side project of mine,
-that implements this tutorial and some links below point to it: [aws-map.com](https://github.com/fibo/aws-map.com). In that case you may find its name, that is *AWS Map*.
+that implements this tutorial and some links below point to it: [fibo/aws-map.com](https://github.com/fibo/aws-map.com). In that case you may find its name, that is *AWS Map*.
 
 ## Route53
 
@@ -78,7 +82,7 @@ npm i dot-editorconfig -D
 Install *typescript* and related packages.
 
 ```bash
-npm i tsify tslint typescript @types/node -D
+npm i tsify tslint tslint-react typescript @types/node -D
 ```
 
 Create the following *tsconfig.json* file in your project root folder.
@@ -89,13 +93,18 @@ Create the following *tsconfig.json* file in your project root folder.
     "allowJs": false,
     "charset": "utf8",
     "esModuleInterop": true,
+    "jsx": "react",
     "module": "commonjs",
     "noImplicitUseStrict": true,
     "removeComments": true,
     "sourceMap": false,
     "strictNullChecks": true,
     "target": "es2017"
-  }
+  },
+  "include": [
+    "api/**/*",
+    "pwa/**/*"
+  ]
 }
 ```
 
@@ -103,9 +112,12 @@ Create *tslint.json* file too: I would start with the following configuration:
 
 ```json
 {
-  "extends": ["tslint:latest"],
+  "extends": ["tslint:latest", "tslint-react"],
   "rules": {
+    "curly": [true, "ignore-same-line"],
+    "jsx-boolean-value": false,
     "member-access": [true, "no-public"],
+    "no-console": false,
     "no-implicit-dependencies": [true, "dev"],
     "ordered-imports": [true,
       {
@@ -123,7 +135,7 @@ Add the following scripts to your *package.json*:
 ```json
   "scripts": {
     "tsc--noemit": "tsc --declaration --project . --noemit",
-    "tslint": "tslint --project ."
+    "tslint": "tslint --project .",
   }
 ```
 
@@ -508,7 +520,267 @@ npm i jsonwebtoken
 
 We are going to use budo and browserify, yeah!
 
+Our goal here is to create a minimal *React* app using *React Router* and deploy it on *CloudFront*.
+Then your app will grow in the direction you want, adding more dependencies and features, evolving according to your requirements.
+
+Install some frontend dependencies.
+
 ```bash
-npm i budo browserify tsify node-sass react react-redux react-router-dom @types/react @types/react-redux @types/react-router-dom redux redux-thunk tslint tslint-react typescript trunx -D
+npm i budo browserify tsify react react-dom react-router-dom @types/react @types/react-redux @types/react-router-dom -D
 ```
 
+Start creating the following files:
+
+* public/js/.gitignore
+* public/index.html
+* pwa/index.tsx
+* pwa/Root.tsx
+* pwa/pages/CreateAccount.tsx
+* pwa/pages/Enter.tsx
+* pwa/pages/Home.tsx
+
+
+### public/js/.gitignore
+
+```
+*
+```
+
+### public/index.html
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <script src="/js/bundle.js" defer></script>
+  </body>
+</html>
+```
+
+### pwa/index.tsx
+
+```typescript
+import * as React from "react"
+import { render } from "react-dom"
+
+import Root from "./Root"
+
+window.addEventListener("load", () => {
+  // Mount app.
+  render(<Root />, document.getElementById("root"))
+})
+```
+
+### pwa/Root.tsx
+
+```typescript
+import * as React from "react"
+import { IntlProvider } from "react-intl"
+import { Provider } from "react-redux"
+import {
+  BrowserRouter,
+  Redirect,
+  Route,
+  Switch,
+} from "react-router-dom"
+
+import CreateAccountPage from "./pages/CreateAccount"
+import EnterPage from "./pages/Enter"
+import HomePage from "./pages/Home"
+
+export default class Root extends React.Component {
+  render() {
+    return (
+      <BrowserRouter>
+        <Switch>
+          <Route component={CreateAccountPage} exact path={CreateAccountPage.path} />
+
+          <Route component={EnterPage} exact path={EnterPage.path} />
+
+          <Route component={HomePage} exact path={HomePage.path} />
+
+          <Redirect from="*" to={HomePage.path} />
+        </Switch>
+      </BrowserRouter>
+    )
+  }
+}
+```
+
+### pwa/pages/CreateAccount.tsx
+
+```typescript
+import * as React from "react"
+
+class CreateAccountPage extends React.Component {
+  static path = "/create-account"
+
+  render() {
+    return (
+      <div>
+        Create account
+      </div>
+    )
+  }
+}
+
+export default CreateAccountPage
+```
+
+### pwa/pages/Enter.tsx
+
+```typescript
+import * as React from "react"
+
+class EnterPage extends React.Component {
+  static path = "/enter"
+
+  render() {
+    return (
+      <div>
+        Enter account
+      </div>
+    )
+  }
+}
+
+export default EnterPage
+```
+
+### pwa/pages/Home.tsx
+
+```typescript
+import * as history from "history"
+import * as React from "react"
+import { Link } from "react-router-dom"
+
+import CreateAccountPage from "./CreateAccount"
+import EnterPage from "./Enter"
+
+class HomePage extends React.Component {
+  static path = "/"
+
+  render() {
+    return (
+      <div>
+        <Link to={CreateAccountPage.path}>Register</Link>
+
+        <Link to={EnterPage.path}>Login</Link>
+      </div>
+    )
+  }
+}
+
+export default HomePage
+```
+
+### Deploy now
+
+As you can see it is an almost empty React app using the router. Add the following npm scripts to your *package.json*:
+
+```json
+  "script": {
+    "deploy": "aws s3 sync public s3://your-domain.com --profile ${npm_package_config_profile} --exclude '.gitignore'",
+    "start": "budo pwa/index.tsx --live --pushstate --dir public --serve js/bundle.js --open -- -p tsify",
+  }
+```
+
+Notice that you need to replace *your-domain.com*. Now if you launch
+
+```bash
+npm start
+```
+
+your default browser will open and you will see your app, the router is working as expected.
+
+Now we are going to deploy it on AWS. Yes, go live as soon as possible and deploy continuosly.
+
+Create a *your-domain.com* S3 bucket. Upload *public/index.html* with command
+
+```bash
+npm run deploy
+```
+
+Go to bucket *Properties* tab and enable *Static website hosting*; flag the *Use this bucket to host a website*
+and set for both *Index document* and *Error document* the string **index.html**.
+
+![Static website hosting](./images/S3-Static_website_hosting.png)
+
+Go to *Permissions* tab and set *Block all public access* to **off**. Then in *Bucket Policy* insert a JSON like the following
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::your-domain.com/*"
+        }
+    ]
+}
+```
+
+This will make *your-domain.com* bucket public. Remembering that you need to substitute with your actual domain, you
+should be already be able to see something on default S3 domain provided by AWS, something like
+
+* http://your-domain.com.s3-website-us-east-1.amazonaws.com
+
+Ok, we want a naked domain served over HTTPS. Go to *CloudFront* and click *Create Distribution*, then choose *Web*.
+
+Set the following options, for other choices keep defaults by now:
+
+* **Origin Domain Name**: `your-domain.com.s3.amazonaws.com`.
+* **Viewer Protocol Policy**: *Redirect HTTP to HTTPS*.
+* **Compress Objects Automatically**: Yes.
+* **Alternate Domain Names (CNAMEs)**: `your-domain.com`.
+* **SSL Certificate**: flag *Custom SSL Certificate*, and choose *your-domain.com* SSL certificate from prompt.
+* **Default Root Object**: `index.html`.
+
+After clicking on *Create Distribution* you will see the new distribution listed and with status *Progressing*.
+Select it, click on *Distribution Settings*, go to *Error Pages* tab and click on *Create Custom Error Response* and set:
+
+* **HTTP Error Code**: *403: Forbidden*.
+* **Customize Error Response**: Yes.
+* **Response Page Path**: `/index.html`.
+* **HTTP Response Code**: *200: OK*.
+
+![Cloudfront react router configuration](./images/CloudFront-React_Router_configuration.png)
+
+You probably know well that when you use *React Router* you need to sync client side and server side routing. The simplest
+configuration is to respond with home page on every route server side, and handle all router client side.
+This is what we did with the configuration above. *CloudFront* will respond with *index.html* to every request not found,
+and the *React Router* can handle the routing client side. It works.
+
+Now you may want to add a *favicon.ico* (otherwise you will serve the homepage) as well as other assets and so on, but let's complete the deploy process adding the router.
+
+Add the following scripts to your *package.json*:
+
+```json
+  "scripts": {
+    "browserify": "browserify pwa/index.tsx -p tsify -o public/js/bundle.js",
+    "predeploy": "npm run browserify",
+  }
+```
+
+Now if you run `npm run deploy` you will upload the *bundle.js* with our embryonic *React Router* managed app.
+
+## Login form
+
+We are almost done. The content tutorial in this tutorial is opinionated but you can easily adapt it to your needs.
+From now on, it will be even more opinionated cause I am going to add my component library: [trunx](https://g14n.info/trunx)
+and all the snippet I like to use. It is a good time to fork and go for your favourite tools, cause now we should complete
+our login form and probably you want to create it with your own stuff. Everything is already there, the app, the APIs, then you can add the PWA requirements, as well as your homepage content.
+
+You can have a look at my implementation: [fibo/aws-map.com](https://github.com/fibo/aws-map.com/tree/Serverless-React-PWA-on-AWS)
+
+> May the force by with you... and with your spirit

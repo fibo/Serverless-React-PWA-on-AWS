@@ -86,6 +86,8 @@ Create the following *tsconfig.json* file in your project root folder.
     "importHelpers": true,
     "module": "commonjs",
     "noImplicitUseStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "removeComments": true,
     "sourceMap": false,
     "strictNullChecks": true,
